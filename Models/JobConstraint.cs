@@ -28,6 +28,10 @@ namespace Skillora.Models
 
         [Range(17, 30, ErrorMessage = "Maximum age must be between 17 and 30.")]
         public int MaxAge { get; set; }
+
+        public string JobId { get; set; }
+
+        public Job Job { get; set; }
     }
 
 }

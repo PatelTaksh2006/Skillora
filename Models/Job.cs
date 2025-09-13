@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Skillora.Models
 {
@@ -23,6 +25,16 @@ namespace Skillora.Models
         [Required]
         [StringLength(100, ErrorMessage = "Job location can be maximum 100 characters.")]
         public string JobLocation { get; set; }
+        public string CompanyId { get; set; }
+
+        [ForeignKey("CompanyId")]
+        public Company Company { get; set; }
+
+        public JobConstraint JobConstraint { get; set; }
+
+        public List<StudentJob> StudentJobs=new List<StudentJob>();
+
+        public List<SkillJob> SkillJobs=new List<SkillJob>();
 
     }
 }

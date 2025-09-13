@@ -2,6 +2,7 @@
 
 namespace Skillora.Models
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class Skill
@@ -13,6 +14,10 @@ namespace Skillora.Models
         [MaxLength(15, ErrorMessage = "Skill name cannot exceed 15 characters.")]
         
         public string Name { get; set; }
+
+        public List<SkillStudent> SkillStudents { get; set; }
+
+        public List<SkillJob> SkillJobs { get; set; }
     }
 
 }

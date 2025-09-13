@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Skillora.Models
 {
@@ -16,6 +17,8 @@ namespace Skillora.Models
 
         [MaxLength(100, ErrorMessage = "Industry field cannot exceed 100 characters.")]
         public string Industry { get; set; }
+
+        public List<Job> Job { get; set; }
     }
 
 }

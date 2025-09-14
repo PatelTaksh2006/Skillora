@@ -32,9 +32,9 @@ namespace Skillora.Models
 
         public JobConstraint JobConstraint { get; set; }
 
-        public List<StudentJob> StudentJobs=new List<StudentJob>();
+        public List<StudentJob> StudentJobs{ get; set; }=new List<StudentJob>();
 
-        public List<SkillJob> SkillJobs=new List<SkillJob>();
+        public List<SkillJob> SkillJobs{ get; set; }=new List<SkillJob>();
 
     }
 }

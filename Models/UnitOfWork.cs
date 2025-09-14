@@ -50,7 +50,7 @@ namespace Skillora.Models
         }
         public void Save()
         {
-            throw new System.NotImplementedException();
+            _appDbContext.SaveChanges();
         }
     }
 }

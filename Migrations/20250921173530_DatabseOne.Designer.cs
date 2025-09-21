@@ -10,8 +10,8 @@ using Skillora.Data;
 namespace Skillora.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250914074251_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250921173530_DatabseOne")]
+    partial class DatabseOne
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace Skillora.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Skillora.Models.Company", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.Company", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -44,12 +44,15 @@ namespace Skillora.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("Skillora.Models.Job", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.Job", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CompanyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CompanyViewModelId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
@@ -74,10 +77,12 @@ namespace Skillora.Migrations
 
                     b.HasIndex("CompanyId");
 
+                    b.HasIndex("CompanyViewModelId");
+
                     b.ToTable("Jobs");
                 });
 
-            modelBuilder.Entity("Skillora.Models.JobConstraint", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.JobConstraint", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -109,7 +114,7 @@ namespace Skillora.Migrations
                     b.ToTable("JobConstraints");
                 });
 
-            modelBuilder.Entity("Skillora.Models.Skill", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.Skill", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -124,7 +129,7 @@ namespace Skillora.Migrations
                     b.ToTable("Skills");
                 });
 
-            modelBuilder.Entity("Skillora.Models.SkillJob", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.SkillJob", b =>
                 {
                     b.Property<string>("SkillId")
                         .HasColumnType("nvarchar(450)");
@@ -139,7 +144,7 @@ namespace Skillora.Migrations
                     b.ToTable("SkillJob");
                 });
 
-            modelBuilder.Entity("Skillora.Models.SkillStudent", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.SkillStudent", b =>
                 {
                     b.Property<string>("SkillId")
                         .HasColumnType("nvarchar(450)");
@@ -154,7 +159,7 @@ namespace Skillora.Migrations
                     b.ToTable("SkillStudent");
                 });
 
-            modelBuilder.Entity("Skillora.Models.Student", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.Student", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -167,7 +172,7 @@ namespace Skillora.Migrations
                         .HasColumnType("decimal(4,2)");
 
                     b.Property<DateTime>("DOB")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -199,7 +204,7 @@ namespace Skillora.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("Skillora.Models.StudentJob", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.StudentJob", b =>
                 {
                     b.Property<string>("StudentId")
                         .HasColumnType("nvarchar(450)");
@@ -214,59 +219,100 @@ namespace Skillora.Migrations
                     b.ToTable("StudentJob");
                 });
 
-            modelBuilder.Entity("Skillora.Models.Job", b =>
+            modelBuilder.Entity("Skillora.Models.ViewModels.CompanyViewModel", b =>
                 {
-                    b.HasOne("Skillora.Models.Company", "Company")
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Industry")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CompanyViewModel");
+                });
+
+            modelBuilder.Entity("Skillora.Models.ViewModels.DeleteJobViewModel", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("companyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DeleteJobViewModel");
+                });
+
+            modelBuilder.Entity("Skillora.Models.Entities.Job", b =>
+                {
+                    b.HasOne("Skillora.Models.Entities.Company", "Company")
                         .WithMany("Job")
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Skillora.Models.ViewModels.CompanyViewModel", null)
+                        .WithMany("Job")
+                        .HasForeignKey("CompanyViewModelId");
                 });
 
-            modelBuilder.Entity("Skillora.Models.JobConstraint", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.JobConstraint", b =>
                 {
-                    b.HasOne("Skillora.Models.Job", "Job")
+                    b.HasOne("Skillora.Models.Entities.Job", "Job")
                         .WithOne("JobConstraint")
-                        .HasForeignKey("Skillora.Models.JobConstraint", "JobId");
+                        .HasForeignKey("Skillora.Models.Entities.JobConstraint", "JobId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Skillora.Models.SkillJob", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.SkillJob", b =>
                 {
-                    b.HasOne("Skillora.Models.Job", "Job")
+                    b.HasOne("Skillora.Models.Entities.Job", "Job")
                         .WithMany("SkillJobs")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skillora.Models.Skill", "Skill")
+                    b.HasOne("Skillora.Models.Entities.Skill", "Skill")
                         .WithMany("SkillJobs")
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Skillora.Models.SkillStudent", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.SkillStudent", b =>
                 {
-                    b.HasOne("Skillora.Models.Skill", "Skill")
+                    b.HasOne("Skillora.Models.Entities.Skill", "Skill")
                         .WithMany("SkillStudents")
                         .HasForeignKey("SkillId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skillora.Models.Student", "Student")
+                    b.HasOne("Skillora.Models.Entities.Student", "Student")
                         .WithMany("SkillStudents")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Skillora.Models.StudentJob", b =>
+            modelBuilder.Entity("Skillora.Models.Entities.StudentJob", b =>
                 {
-                    b.HasOne("Skillora.Models.Job", "Job")
+                    b.HasOne("Skillora.Models.Entities.Job", "Job")
                         .WithMany("StudentJobs")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Skillora.Models.Student", "Student")
+                    b.HasOne("Skillora.Models.Entities.Student", "Student")
                         .WithMany("StudentJobs")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)

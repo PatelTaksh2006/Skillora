@@ -1,0 +1,65 @@
+@model List<JobListViewModel>
+
+@{
+    ViewData["Title"] = "Job List";
+}
+
+<h1>Job List</h1>
+<form asp-action="JobList" method="post">
+    <input type="hidden" value="@ViewBag.studentId" name="studentId"/>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Apply</th>
+                <th>Job ID</th>
+                <th>Company Skills</th>
+                <th>Matched Skills</th>
+                <th>Remaining Skills</th>
+                <th>Eligibility</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var job = Model[i];
+                <tr>
+                    <td>
+                        @if (job.eligible)
+                        {
+                            <input type="checkbox" name="selectedJobIds" value="@job.Id" />
+                        }
+                        else
+                        {
+                            <span class="text-danger">Not Eligible</span>
+                        }
+                    </td>
+                    <td>@job.Id</td>
+                    <td>
+                        @foreach (var skill in job.CompanySkills)
+                        {
+                            <span class="badge badge-info">@skill</span>
+                        }
+                    </td>
+                    <td>
+                        @foreach (var skill in job.MatchedSkills)
+                        {
+                            <span class="badge badge-success">@skill</span>
+                        }
+                    </td>
+                    <td>
+                        @foreach (var skill in job.RemainingSkills)
+                        {
+                            <span class="badge badge-warning">@skill</span>
+                        }
+                    </td>
+                    <td>
+                        @(job.eligible ? "Eligible" : "Not Eligible")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="form-group">
+        <input type="submit" value="Apply Selected Jobs" class="btn btn-primary" />
+    </div>
+</form>

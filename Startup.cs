@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper.Configuration.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,7 +10,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Skillora.Data;
+using Skillora.Mappings;
 using Skillora.Models;
+using Skillora.Models.Entities;
+using Skillora.Repositories.Implementations;
+using Skillora.Repositories.Interfaces;
+using Skillora.Services.Implementations;
+using Skillora.Services.Interfaces;
 
 namespace Skillora
 {
@@ -28,6 +36,15 @@ namespace Skillora
             services.AddControllersWithViews();
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DbCon")));
             services.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<ICompanyService, CompanyService>();
+            services.AddScoped<IJobService, JobService>();
+            var config = new AutoMapper.MapperConfiguration(cfg => 
+            {
+                cfg.AddProfile(new Helper());
+             });
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

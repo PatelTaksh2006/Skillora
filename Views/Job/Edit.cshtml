@@ -1,0 +1,82 @@
+﻿@model Skillora.Models.ViewModels.EditJobViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>EditJobViewModel</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input asp-for="CompanyId" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="package" class="control-label"></label>
+                <input asp-for="package" class="form-control" />
+                <span asp-validation-for="package" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobLocation" class="control-label"></label>
+                <input asp-for="JobLocation" class="form-control" />
+                <span asp-validation-for="JobLocation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="selectedSkills" class="control-label"></label>
+                <select asp-for="selectedSkills" asp-items="@Model.skills" class="form-control" multiple="multiple"></select>
+                <span asp-validation-for="selectedSkills" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="MinCGPA" class="control-label"></label>
+                <input asp-for="MinCGPA" class="form-control" />
+                <span asp-validation-for="MinCGPA" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinPercentage10" class="control-label"></label>
+                <input asp-for="MinPercentage10" class="form-control" />
+                <span asp-validation-for="MinPercentage10" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinPercentage12" class="control-label"></label>
+                <input asp-for="MinPercentage12" class="form-control" />
+                <span asp-validation-for="MinPercentage12" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinAge" class="control-label"></label>
+                <input asp-for="MinAge" class="form-control" />
+                <span asp-validation-for="MinAge" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxAge" class="control-label"></label>
+                <input asp-for="MaxAge" class="form-control" />
+                <span asp-validation-for="MaxAge" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

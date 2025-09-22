@@ -1,0 +1,65 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<ApplyStudentViewModel>
+@{
+    ViewData["Title"] = "GetApplyList";
+}
+
+<h1>Applied student</h1>
+<form asp-action="GetApplyList" method="post">
+<table>
+    <thead>
+        <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Cgpa</th>
+            <th>10th percentage</th>
+            <th>12th percentage</th>
+            <th>Skills</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>
+                    <input type="checkbox" name="selectedStudents" value="@item.StudentId" />
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Email
+                </td>
+                <td>
+                    @item.Phone
+                </td>
+                <td>
+                    @item.Cgpa
+                </td>
+                <td>
+                    @item.Percentage10
+                </td>
+                <td>
+                    @item.Percentage12
+                </td>
+                <td>
+                    @foreach(var skill in item.Skills)
+                    {
+                        <span class="badge badge-info">@skill</span>
+                    }
+                    
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<div class="form-group">
+    <input type="submit" value="Apply Selected Jobs" class="btn btn-primary" />
+</div>
+</form>

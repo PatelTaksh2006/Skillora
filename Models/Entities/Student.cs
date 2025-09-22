@@ -48,6 +48,8 @@ namespace Skillora.Models.Entities
         public decimal Percentage12 { get; set; }
         public List<StudentJob> StudentJobs { get; set; }=new List<StudentJob>();
         public List<SkillStudent> SkillStudents { get; set; } = new List<SkillStudent>();
+        
+        public List<SelectedStudentJob> shortListedStudentJobs { get; set; }
 
     }
 }

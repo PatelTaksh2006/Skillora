@@ -31,14 +31,14 @@ namespace Skillora.Repositories.Implementations
 
         public List<Job> GetAll()
         {
-            return _appDbContext.Jobs.Include(j=>j.Company).Include(j=>j.JobConstraint).Include(j=>j.SkillJobs).ThenInclude(sj=>sj.Skill).ToList();
+            return _appDbContext.Jobs.Include(j=>j.Company).Include(j=>j.JobConstraint).Include(j=>j.SkillJobs).ThenInclude(sj=>sj.Skill).Include(j=>j.StudentJobs).ThenInclude(sj=>sj.Student).ToList();
         }
 
         
 
         public Job GetById(string id)
         {
-            return _appDbContext.Jobs.Include(j=>j.Company).Include(j => j.SkillJobs).ThenInclude(sj => sj.Skill).Include(j => j.JobConstraint).FirstOrDefault(j => j.Id == id);
+            return _appDbContext.Jobs.Include(j=>j.Company).Include(j => j.SkillJobs).ThenInclude(sj => sj.Skill).Include(j => j.JobConstraint).Include(j => j.StudentJobs).ThenInclude(sj => sj.Student).FirstOrDefault(j => j.Id == id);
         }
 
         public void insert(Job entity,JobConstraint jobConstraint)

@@ -156,8 +156,10 @@ namespace Skillora.Controllers
             List<JobListViewModel> jobListViewModels = new List<JobListViewModel>();
             foreach (var item in jobs)
             {
+                
                 var jobSkills = item.SkillJobs.Select(sj => sj.Skill).ToList();
-                bool eligible = false;
+                bool eligible = false,isApplied=false;
+                
                 int age = DateTime.Now.Year - student.DOB.Year;
                 if (student.DOB > DateTime.Now.AddYears(-age)) age--;
 
@@ -175,14 +177,23 @@ namespace Skillora.Controllers
                 {
                     eligible = false;
                 }
-                var jobListViewModel = new JobListViewModel()
+                if (student.StudentJobs.Any(s => s.JobId == item.Id))
                 {
-                    Id = item.Id,
-                    CompanySkills = item.SkillJobs.Select(sj => sj.Skill.Name).ToList(),
-                    MatchedSkills = jobSkills.Where(js => studentSkills.Any(ss => ss.Id == js.Id)).Select(js => js.Name).ToList(),
-                    RemainingSkills = jobSkills.Where(js => !studentSkills.Any(ss => ss.Id == js.Id)).Select(js => js.Name).ToList(),
-                    eligible = eligible
-                };
+                    isApplied = true;
+                }
+
+                
+
+                var jobListViewModel = new JobListViewModel()
+                    {
+                        Id = item.Id,
+                        CompanySkills = item.SkillJobs.Select(sj => sj.Skill.Name).ToList(),
+                        MatchedSkills = jobSkills.Where(js => studentSkills.Any(ss => ss.Id == js.Id)).Select(js => js.Name).ToList(),
+                        RemainingSkills = jobSkills.Where(js => !studentSkills.Any(ss => ss.Id == js.Id)).Select(js => js.Name).ToList(),
+                        eligible = eligible,
+                        applied = isApplied,
+
+                    };
                 jobListViewModels.Add(jobListViewModel);
             }
             ViewBag.studentId = student.Id;
@@ -195,7 +206,6 @@ namespace Skillora.Controllers
         {
             if (selectedJobIds == null || !selectedJobIds.Any())
             {
-                TempData["Message"] = "No jobs selected!";
                 return RedirectToAction("JobList", new { id = id });
             }
 

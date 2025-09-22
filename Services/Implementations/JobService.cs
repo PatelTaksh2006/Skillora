@@ -77,8 +77,24 @@ namespace Skillora.Services.Implementations
             return job != null ? job.Company : null;
         }
 
+        public void ShortListStudents(string jobId, List<string> studentIds)
+        {
+            var job= _unitOfWork.Job.GetById(jobId);
+            foreach (var item in studentIds)
+            {
+                job.shortListedStudentJobs.Add(new SelectedStudentJob()
+                {
+                    StudentId = item,
+                });
+                var exisiting = job.StudentJobs.FirstOrDefault(sj => sj.StudentId == item);
+                job.StudentJobs.Remove(exisiting);
+            }
+            _unitOfWork.Job.update(job);
+            _unitOfWork.Save();
+        }
+
         // Update a job
-        
+
 
         public Job Update(Job job, string[] selectedSkills, List<string> existingSkills)
         {

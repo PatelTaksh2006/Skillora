@@ -16,6 +16,7 @@
                 <th>Matched Skills</th>
                 <th>Remaining Skills</th>
                 <th>Eligibility</th>
+                <th>Application status</th>
             </tr>
         </thead>
         <tbody>
@@ -24,13 +25,20 @@
                 var job = Model[i];
                 <tr>
                     <td>
-                        @if (job.eligible)
+                        @if(job.applied)
                         {
-                            <input type="checkbox" name="selectedJobIds" value="@job.Id" />
+                            <span>Pending</span>
                         }
                         else
                         {
-                            <span class="text-danger">Not Eligible</span>
+                            @if (job.eligible)
+                            {
+                                <input type="checkbox" name="selectedJobIds" value="@job.Id" />
+                            }
+                            else
+                            {
+                                <span class="text-danger">Not Eligible</span>
+                            }
                         }
                     </td>
                     <td>@job.Id</td>
@@ -55,6 +63,7 @@
                     <td>
                         @(job.eligible ? "Eligible" : "Not Eligible")
                     </td>
+                    
                 </tr>
             }
         </tbody>

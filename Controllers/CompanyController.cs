@@ -53,19 +53,23 @@ namespace Skillora.Controllers
         }
 
         // GET: CompanyController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
-            return View();
+            var company=_companyService.Get(id);
+            var model=_mapper.Map<EditCompanyViewModel>(company);
+            return View(model);
         }
 
         // POST: CompanyController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(EditCompanyViewModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var company=_mapper.Map<Company>(model);
+                _companyService.Update(company);
+                return RedirectToAction("Index");
             }
             catch
             {
@@ -96,5 +100,7 @@ namespace Skillora.Controllers
             }
             return RedirectToAction("Index");
         }
+
+        
     }
 }

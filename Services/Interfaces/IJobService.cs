@@ -15,6 +15,7 @@ namespace Skillora.Services.Interfaces
 
         public List<Skill> GetAllSkills();
 
-        
+        public void ShortListStudents(string jobId, List<string> studentIds);
+
     }
 }

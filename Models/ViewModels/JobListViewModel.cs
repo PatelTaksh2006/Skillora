@@ -16,5 +16,7 @@ namespace Skillora.Models.ViewModels
         public List<string> RemainingSkills { get; set; }
 
         public bool eligible { get; set; }
+
+        public bool applied { get; set; }
     }
 }

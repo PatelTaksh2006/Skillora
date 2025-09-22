@@ -170,5 +170,50 @@ namespace Skillora.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
+        [HttpGet]
+        public IActionResult GetApplyList(string id)
+        {
+            var job=_jobService.Get(id);
+            if(job==null)
+            {
+                return NotFound();
+            }
+
+            List<ApplyStudentViewModel> applyStudentViewModels = new List<ApplyStudentViewModel>();
+            foreach (var item in job.StudentJobs)
+            {
+                ApplyStudentViewModel apl = new ApplyStudentViewModel()
+                {
+                    StudentId = item.StudentId,
+                    Name = item.Student.Name,
+                    Email = item.Student.Email,
+                    Phone = item.Student.Phone,
+                    Github = item.Student.Github,
+                    Cgpa = item.Student.Cgpa,
+                    Percentage10 = item.Student.Percentage10,
+                    Percentage12 = item.Student.Percentage12,
+                    Skills=item.Student.SkillStudents.Select(s=>s.Skill.Name).ToList()
+                };
+                applyStudentViewModels.Add(apl);
+            }
+
+            return View(applyStudentViewModels);
+        }
+
+        [HttpPost]
+        public IActionResult GetApplyList(string id,List<string> selectedStudents)
+        {
+            if(selectedStudents==null || selectedStudents.Count==0)
+            {
+                ModelState.AddModelError(string.Empty, "Please select at least one student.");
+                return RedirectToAction("GetApplyList", new {id=id});
+            }
+
+            _jobService.ShortListStudents(id, selectedStudents);
+            return RedirectToAction("Index");
+
+        }
     }
 }

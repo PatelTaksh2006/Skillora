@@ -112,6 +112,21 @@ namespace Skillora.Migrations
                     b.ToTable("JobConstraints");
                 });
 
+            modelBuilder.Entity("Skillora.Models.Entities.ShortListedStudentJob", b =>
+                {
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("JobId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("StudentId", "JobId");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("ShortListedStudentJob");
+                });
+
             modelBuilder.Entity("Skillora.Models.Entities.Skill", b =>
                 {
                     b.Property<string>("Id")
@@ -270,6 +285,21 @@ namespace Skillora.Migrations
                         .WithOne("JobConstraint")
                         .HasForeignKey("Skillora.Models.Entities.JobConstraint", "JobId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Skillora.Models.Entities.ShortListedStudentJob", b =>
+                {
+                    b.HasOne("Skillora.Models.Entities.Job", "Job")
+                        .WithMany("shortListedStudentJobs")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Skillora.Models.Entities.Student", "Student")
+                        .WithMany("shortListedStudentJobs")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Skillora.Models.Entities.SkillJob", b =>

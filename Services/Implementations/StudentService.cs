@@ -111,6 +111,7 @@ namespace Skillora.Services.Implementations
             }
 
             _unitOfWork.Student.update(student);
+            _unitOfWork.Save();
         }
     }
 }

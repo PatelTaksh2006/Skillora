@@ -7,5 +7,6 @@
         public string JobId { get; set; }
         public Job Job { get; set; }
         
+        public bool Status { get; set; } //true=selected """"""  false=rejected
     }
 }

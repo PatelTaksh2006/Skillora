@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper.Configuration.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,11 +10,16 @@ using Microsoft.Extensions.Hosting;
 using Skillora.Data;
 using Skillora.Mappings;
 using Skillora.Models;
+using Skillora.Models.Auth;
 using Skillora.Models.Entities;
 using Skillora.Repositories.Implementations;
 using Skillora.Repositories.Interfaces;
 using Skillora.Services.Implementations;
 using Skillora.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Skillora
 {
@@ -35,6 +37,9 @@ namespace Skillora
         {
             services.AddControllersWithViews();
             services.AddDbContextPool<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DbCon")));
+            services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
             services.AddScoped<IUnitOfWork,UnitOfWork>();
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICompanyService, CompanyService>();
@@ -64,9 +69,8 @@ namespace Skillora
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication(); // MUST come before Authorization
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

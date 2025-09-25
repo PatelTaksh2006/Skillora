@@ -1,0 +1,43 @@
+﻿@model List<StudentViewModel>
+
+<h1>All Students</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>DOB</th>
+            <th>Github</th>
+            <th>Phone</th>
+            <th>Cgpa</th>
+            <th>10th %</th>
+            <th>12th %</th>
+            <th>Skills</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model)
+        {
+            <tr>
+                <td>@student.Name</td>
+                <td>@student.Email</td>
+                <td>@student.DOB.ToShortDateString()</td>
+                <td>
+                    <a href="@student.Github" target="_blank">@student.Github.Host</a>
+                </td>
+                <td>@student.Phone</td>
+                <td>@student.Cgpa</td>
+                <td>@student.Percentage10</td>
+                <td>@student.Percentage12</td>
+                <td>
+                    @foreach (var skill in student.Skills)
+                    {
+                        <span class="badge bg-info text-dark">@skill</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

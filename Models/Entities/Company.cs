@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Skillora.Models.Auth;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Skillora.Models.Entities
@@ -19,6 +20,8 @@ namespace Skillora.Models.Entities
         public string Industry { get; set; }
 
         public List<Job> Job { get; set; }
+
+        public AppUser User { get; set; }
     }
 
 }

@@ -1,10 +1,10 @@
-﻿@model IEnumerable<Skillora.Models.Entities.Job>
+﻿@model IEnumerable<Skillora.Models.ViewModels.CompanyViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "AdminIndex";
 }
 
-<h1>Index</h1>
+<h1>AdminIndex</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -12,20 +12,15 @@
 <table class="table">
     <thead>
         <tr>
+            
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.package)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.JobLocation)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
+                @Html.DisplayNameFor(model => model.Industry)
             </th>
             <th></th>
         </tr>
@@ -33,20 +28,15 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.package)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.JobLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
+                @Html.DisplayFor(modelItem => item.Industry)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

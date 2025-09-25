@@ -1,7 +1,9 @@
 ﻿
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Skillora.Models.Auth;
 using Skillora.Models.Entities;
 using Skillora.Models.ViewModels;
 using Skillora.Repositories.Interfaces;
@@ -10,6 +12,7 @@ using Skillora.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Skillora.Controllers
 {
@@ -17,17 +20,23 @@ namespace Skillora.Controllers
     {
         private readonly IStudentService _studentService;
         private readonly IMapper _mapper;
-        public StudentController(IStudentService studentService, IMapper mapper)
+        private readonly UserManager<AppUser> _userManager;
+        public StudentController(IStudentService studentService, IMapper mapper,UserManager<AppUser> userManager)
         {
             _studentService = studentService;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var listOfStudent = _studentService.GetAll();
-            var model = _mapper.Map<List<StudentViewModel>>(listOfStudent);
-            return View(model);
+            //var listOfStudent = _studentService.GetAll();
+            //var model = _mapper.Map<List<StudentViewModel>>(listOfStudent);
+            //return View(model);
+
+            var user =await _userManager.GetUserAsync(User);
+            var studentId = user.StudentId;
+            return View(_studentService.Get(studentId));
 
         }
 
@@ -46,7 +55,7 @@ namespace Skillora.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateStudentViewModel model)
+        public async Task<IActionResult> Create(CreateStudentViewModel model)
         {
             //Console.WriteLine(model);
             if (ModelState.IsValid)
@@ -54,8 +63,10 @@ namespace Skillora.Controllers
                 try
                 {
                     var Student = _mapper.Map<Student>(model);
-                    _studentService.Add(Student, model.selectedSKills);
-
+                    var student=_studentService.Add(Student, model.selectedSKills);
+                    var user = await _userManager.GetUserAsync(User);
+                    user.StudentId = student.Id;
+                    var result = await _userManager.UpdateAsync(user);
                     return RedirectToAction("Index");
 
                 }
@@ -148,15 +159,21 @@ namespace Skillora.Controllers
 
 
         [HttpGet]
-        public IActionResult JobList(string id)
+        public async Task<IActionResult> JobList()
         {
+            var user=await _userManager.GetUserAsync(User);
+            string id = user.StudentId;
             var jobs = _studentService.GetAllJobs();
             var student = _studentService.Get(id);
             var studentSkills = student.SkillStudents.Select(ss => ss.Skill).ToList();
             List<JobListViewModel> jobListViewModels = new List<JobListViewModel>();
             foreach (var item in jobs)
             {
-                
+                if (student.StudentJobs.Any(sj => sj.JobId == item.Id && sj.applied == true))
+                {
+                    continue; // skip this student
+                }
+
                 var jobSkills = item.SkillJobs.Select(sj => sj.Skill).ToList();
                 bool eligible = false,isApplied=false;
                 
@@ -202,8 +219,10 @@ namespace Skillora.Controllers
         }
 
         [HttpPost]
-        public IActionResult JobList(string id, List<string> selectedJobIds)
+        public async Task<IActionResult> JobList(List<string> selectedJobIds)
         {
+            var user=await _userManager.GetUserAsync(User);
+            string id = user.StudentId;
             if (selectedJobIds == null || !selectedJobIds.Any())
             {
                 return RedirectToAction("JobList", new { id = id });
@@ -212,6 +231,49 @@ namespace Skillora.Controllers
             _studentService.applyJob(id, selectedJobIds);
             return RedirectToAction("Index");
 
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> offeredJob()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            string id = user.StudentId;
+            var student = _studentService.Get(id);
+            var offeredJobs = student.SelectedStudentJobs;
+            List<OfferedJobViewModel> jobs = new List<OfferedJobViewModel>();
+            foreach (var item in offeredJobs)
+            {
+                jobs.Add(new OfferedJobViewModel()
+                {
+                    JobId=item.JobId,
+                    JobName=item.Job.Title,
+                    status=item.Status,
+                });
+
+            }
+            return View(jobs);
+        }
+
+        [HttpGet]
+        public IActionResult AdminIndex()
+        {
+            var students = _studentService.GetAll()
+    .Select(s => new StudentViewModel
+    {
+        Id = s.Id,
+        Name = s.Name,
+        Email = s.Email,
+        DOB = s.DOB,
+        Github = s.Github,
+        Cgpa = s.Cgpa,
+        Phone = s.Phone,
+        Percentage10 = s.Percentage10,
+        Percentage12 = s.Percentage12,
+        Skills = s.SkillStudents.Select(sk => sk.Skill.Name).ToList()
+    })
+    .ToList();
+
+            return View(students);
         }
     }
 }

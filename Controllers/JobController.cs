@@ -25,9 +25,15 @@ namespace Skillora.Controllers
             _jobService = jobService;
             _mapper = mapper;
         }
-        public ActionResult Index()
+
+        [HttpGet("Job/DisplayByCompany/{companyId}")]
+        public ActionResult DisplayByCompany(string companyId)
         {
-            var models = _jobService.GetAll();
+            var models = _jobService.GetAll()
+                .Where(j => j.CompanyId == companyId)
+                .Select(j => (j))
+                .ToList();
+            ViewData["id"] = companyId;
             return View(models);
         }
 
@@ -55,6 +61,7 @@ namespace Skillora.Controllers
             {
                 Console.WriteLine(item);
             }
+            ViewData["id"] = companyId;
             return View(model);
         }
 
@@ -70,7 +77,7 @@ namespace Skillora.Controllers
                     var job=_mapper.Map<Job>(model);
                     var jobCon = _mapper.Map<JobConstraint>(model);
                     _jobService.Add(job,jobCon,model.selectedSkills);
-                    return Redirect("Index");
+                    return RedirectToAction("DisplayByCompany", "Job", new {companyId= model.CompanyId});
                 }
                 catch(Exception ex)
                 {
@@ -78,6 +85,13 @@ namespace Skillora.Controllers
                 }
                 
             }
+            var skills = _jobService.GetAllSkills();
+            var selectList = new List<SelectListItem>();
+            foreach (var item in skills)
+            {
+                selectList.Add(new SelectListItem(item.Name, item.Id));
+            }
+            model.skills = selectList;
             return View(model);
         }
 
@@ -122,7 +136,7 @@ namespace Skillora.Controllers
                     job.JobConstraint.Id = jobConId;
                     _jobService.Update(job, model.selectedSkills, existingSkills);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("");
                 }
                 catch (Exception ex)
                 {
@@ -175,32 +189,65 @@ namespace Skillora.Controllers
         [HttpGet]
         public IActionResult GetApplyList(string id)
         {
-            var job=_jobService.Get(id);
-            if(job==null)
-            {
+            var job = _jobService.Get(id);
+            if (job == null)
                 return NotFound();
-            }
 
             List<ApplyStudentViewModel> applyStudentViewModels = new List<ApplyStudentViewModel>();
-            foreach (var item in job.StudentJobs)
+            if (job.StudentJobs!=null && job.StudentJobs.Any(sj=>sj.applied==false))
             {
-                ApplyStudentViewModel apl = new ApplyStudentViewModel()
-                {
-                    StudentId = item.StudentId,
-                    Name = item.Student.Name,
-                    Email = item.Student.Email,
-                    Phone = item.Student.Phone,
-                    Github = item.Student.Github,
-                    Cgpa = item.Student.Cgpa,
-                    Percentage10 = item.Student.Percentage10,
-                    Percentage12 = item.Student.Percentage12,
-                    Skills=item.Student.SkillStudents.Select(s=>s.Skill.Name).ToList()
-                };
-                applyStudentViewModels.Add(apl);
-            }
+                ViewData["result"] = "applied";
+                List<StudentJob> students = job.StudentJobs;
 
+
+
+                foreach (var item in students)
+                {
+                    
+                    ApplyStudentViewModel apl = new ApplyStudentViewModel()
+                    {
+                        StudentId = item.StudentId,
+                        Name = item.Student.Name,
+                        Email = item.Student.Email,
+                        Phone = item.Student.Phone,
+                        Github = item.Student.Github,
+                        Cgpa = item.Student.Cgpa,
+                        Percentage10 = item.Student.Percentage10,
+                        Percentage12 = item.Student.Percentage12,
+                        Skills = item.Student.SkillStudents.Select(s => s.Skill.Name).ToList()
+                    };
+                    applyStudentViewModels.Add(apl);
+                }
+
+            }
+            else
+            {
+                ViewData["result"] = "offered";
+                List<SelectedStudentJob> students = job.SelectedStudentJobs;
+
+
+
+                foreach (var item in students)
+                {
+                    ApplyStudentViewModel apl = new ApplyStudentViewModel()
+                    {
+                        StudentId = item.StudentId,
+                        Name = item.Student.Name,
+                        Email = item.Student.Email,
+                        Phone = item.Student.Phone,
+                        Github = item.Student.Github,
+                        Cgpa = item.Student.Cgpa,
+                        Percentage10 = item.Student.Percentage10,
+                        Percentage12 = item.Student.Percentage12,
+                        Skills = item.Student.SkillStudents.Select(s => s.Skill.Name).ToList()
+                    };
+                    applyStudentViewModels.Add(apl);
+                }
+            }
+                ViewData["id"] = id;
             return View(applyStudentViewModels);
         }
+
 
         [HttpPost]
         public IActionResult GetApplyList(string id,List<string> selectedStudents)
@@ -208,11 +255,13 @@ namespace Skillora.Controllers
             if(selectedStudents==null || selectedStudents.Count==0)
             {
                 ModelState.AddModelError(string.Empty, "Please select at least one student.");
+                ViewData["id"] = id;
                 return RedirectToAction("GetApplyList", new {id=id});
             }
 
+            Console.WriteLine(id);
             _jobService.ShortListStudents(id, selectedStudents);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index","Company");
 
         }
     }

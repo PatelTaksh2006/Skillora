@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Skillora.Models.Auth;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Policy;
 
 namespace Skillora.Models.Entities
 {
@@ -49,7 +51,7 @@ namespace Skillora.Models.Entities
         public List<StudentJob> StudentJobs { get; set; }=new List<StudentJob>();
         public List<SkillStudent> SkillStudents { get; set; } = new List<SkillStudent>();
         
-        public List<SelectedStudentJob> shortListedStudentJobs { get; set; }
-
+        public List<SelectedStudentJob> SelectedStudentJobs { get; set; }
+        public AppUser User { get; set; }
     }
 }

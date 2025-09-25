@@ -1,4 +1,5 @@
-﻿using Skillora.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Skillora.Data;
 using Skillora.Models.Entities;
 using Skillora.Repositories.Interfaces;
 using System;
@@ -28,7 +29,7 @@ namespace Skillora.Repositories.Implementations
 
         public Company GetById(string id)
         {
-            return _appDbContext.Companies.FirstOrDefault(x => x.Id == id);
+            return _appDbContext.Companies.Include(c=>c.Job).FirstOrDefault(x => x.Id == id);
         }
 
         public void insert(Company entity)

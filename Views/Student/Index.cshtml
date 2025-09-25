@@ -1,69 +1,48 @@
-﻿@using Skillora.Models.ViewModels
-@model IEnumerable<StudentViewModel>
+﻿@model Skillora.Models.Entities.Student
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Student Profile";
+    ViewData["role"] = "Student";
+    ViewData["id"] = Model?.Id;
 }
-<h1>Index</h1>
-<p><a asp-action="Create">create New</a></p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(Model => Model.Name)
-            </th>
-            <th>
-            @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DOB)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Github)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cgpa)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Percentage10)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Percentage12)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(Modelitem=>item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DOB)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Github)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Cgpa)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Percentage10)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Percentage12)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+<h2>Student Profile</h2>
+
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">@Model.Name</h4>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Phone:</strong> @Model.Phone</p>
+            <p><strong>Date of Birth:</strong> @Model.DOB.ToShortDateString()</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>Pincode:</strong> @Model.Pincode</p>
+            <p><strong>Github:</strong> @Model.Github</p>
+            <p><strong>CGPA:</strong> @Model.Cgpa</p>
+            <p><strong>10th Percentage:</strong> @Model.Percentage10</p>
+            <p><strong>12th Percentage:</strong> @Model.Percentage12</p>
+            <p><strong>Skills:</strong>
+                @if (Model.SkillStudents != null && Model.SkillStudents.Any())
+                {
+                    <ul>
+                        @foreach (var skill in Model.SkillStudents)
+                        {
+                            <li>@skill.Skill?.Name</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span>No skills listed.</span>
+                }
+            </p>
+        </div>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary mt-3">Edit Profile</a>
+    <a asp-action="JobList" asp-route-id="@Model.Id" class="btn btn-secondary mt-3">View Jobs</a>
+}
+else
+{
+    <div class="alert alert-warning">Student profile not found.</div>
+}

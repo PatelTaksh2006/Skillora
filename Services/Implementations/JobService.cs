@@ -80,11 +80,24 @@ namespace Skillora.Services.Implementations
         public void ShortListStudents(string jobId, List<string> studentIds)
         {
             var job= _unitOfWork.Job.GetById(jobId);
-            foreach (var item in studentIds)
+
+            var total = job.StudentJobs.Select(sj=>sj.StudentId);
+            var except = total.Except(studentIds);
+            foreach (var item in except)
             {
-                job.shortListedStudentJobs.Add(new SelectedStudentJob()
+                job.StudentJobs.FirstOrDefault(sj => sj.StudentId == item).applied=true;
+                job.SelectedStudentJobs.Add(new SelectedStudentJob()
                 {
                     StudentId = item,
+                    Status = false
+                });
+            }
+            foreach (var item in studentIds)
+            {
+                job.SelectedStudentJobs.Add(new SelectedStudentJob()
+                {
+                    StudentId = item,
+                    Status=true,
                 });
                 var exisiting = job.StudentJobs.FirstOrDefault(sj => sj.StudentId == item);
                 job.StudentJobs.Remove(exisiting);

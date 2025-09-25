@@ -35,6 +35,6 @@ namespace Skillora.Models.Entities
         public List<StudentJob> StudentJobs{ get; set; }
 
         public List<SkillJob> SkillJobs{ get; set; }=new List<SkillJob>();
-        public List<SelectedStudentJob> shortListedStudentJobs { get; set; }= new List<SelectedStudentJob>();
+        public List<SelectedStudentJob> SelectedStudentJobs { get; set; }= new List<SelectedStudentJob>();
     }
 }

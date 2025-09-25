@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skillora.Data;
 
 namespace Skillora.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250924133046_SelectedStudentUpdate")]
+    partial class SelectedStudentUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,9 +440,6 @@ namespace Skillora.Migrations
 
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("applied")
-                        .HasColumnType("bit");
 
                     b.HasKey("StudentId", "JobId");
 

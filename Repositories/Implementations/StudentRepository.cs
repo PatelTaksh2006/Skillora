@@ -23,12 +23,12 @@ namespace Skillora.Repositories.Implementations
 
         public List<Student> getAll()
         {
-            return _appDbContext.Students.ToList();
+            return _appDbContext.Students.Include(s=>s.SkillStudents).ThenInclude(s=>s.Skill).ToList();
         }
 
         public Student GetById(string id)
         {
-            return _appDbContext.Students.Include(s=>s.SkillStudents).ThenInclude(ss => ss.Skill).Include(s=>s.StudentJobs).FirstOrDefault(x => x.Id == id);
+            return _appDbContext.Students.Include(s=>s.SkillStudents).ThenInclude(ss => ss.Skill).Include(s=>s.StudentJobs).Include(s=>s.SelectedStudentJobs).ThenInclude(sj=>sj.Job).FirstOrDefault(x => x.Id == id);
         }
 
         public void insert(Student entity)

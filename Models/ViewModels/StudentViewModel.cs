@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Web;
 
@@ -11,8 +12,14 @@ namespace Skillora.Models.ViewModels
         public string Email { get;set; }
         public DateTime DOB { get;set; }
         public Uri Github { get;set; }
-        public double Cgpa { get;set; }
-        public double Percentage10  { get;set; }
-        public double Percentage12 { get;set; } 
+        public decimal Cgpa { get;set; }
+
+        public string Phone {  get;set; }
+        public decimal Percentage10  { get;set; }
+        public decimal Percentage12 { get;set; } 
+
+        public List<string> Skills { get;set; }
+
+
     }
 }

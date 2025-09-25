@@ -1,15 +1,19 @@
-﻿using Skillora.Models.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Skillora.Models.Auth;
+using Skillora.Models.Entities;
 using Skillora.Repositories.Interfaces;
 using Skillora.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Skillora.Services.Implementations
 {
     public class StudentService:IStudentService
     {
         private readonly IUnitOfWork _unitOfWork;
+        
         public StudentService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -43,6 +47,7 @@ namespace Skillora.Services.Implementations
                     SkillId = item
                 });
             }
+            
             _unitOfWork.Student.insert(student);
             _unitOfWork.Save();
             return student;

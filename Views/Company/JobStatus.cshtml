@@ -1,0 +1,27 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Job Status";
+    var jobs = ViewData["jobs"] as IEnumerable<Job>;
+}
+
+<h2>Select a Job</h2>
+
+<form asp-controller="Job" asp-action="GetApplyList" method="get">
+    <div class="form-group">
+        <label for="id">Choose Job</label>
+        <select id="id" name="id" class="form-control">
+            <option value="">-- Select Job --</option>
+            @if (jobs != null)
+            {
+                foreach (var job in jobs)
+                {
+                    <option value="@job.Id">@job.Title</option>
+                }
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

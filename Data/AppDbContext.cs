@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Skillora.Models.Entities;
 using Skillora.Models.ViewModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Skillora.Models.Auth;
 
 namespace Skillora.Data
 {
-    public class AppDbContext:DbContext
+    public class AppDbContext:IdentityDbContext<AppUser>
     {
         public DbSet<Student> Students {  get; set; }
         public DbSet<Company> Companies { get; set; }
@@ -15,11 +18,27 @@ namespace Skillora.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder); // Required for Identity
+
+            modelBuilder.Entity<AppUser>()
+                .HasOne(u => u.Student)
+                .WithOne(s => s.User)
+                .HasForeignKey<AppUser>(u => u.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AppUser>()
+                .HasOne(u => u.Company)
+                .WithOne(c => c.User)
+                .HasForeignKey<AppUser>(u => u.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.Job)
                 .WithOne(j => j.Company)
                 .HasForeignKey(j => j.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
             modelBuilder.Entity<Job>()
     .HasOne(j => j.JobConstraint)
     .WithOne(jc => jc.Job)
@@ -54,13 +73,15 @@ namespace Skillora.Data
             modelBuilder.Entity<SelectedStudentJob>()
                 .HasKey(ssj => new { ssj.StudentId, ssj.JobId });   
             modelBuilder.Entity<SelectedStudentJob>()
-                .HasOne(ssj => ssj.Student).WithMany(s => s.shortListedStudentJobs).HasForeignKey(ssj => ssj.StudentId).OnDelete(DeleteBehavior.Cascade);
+                .HasOne(ssj => ssj.Student).WithMany(s => s.SelectedStudentJobs).HasForeignKey(ssj => ssj.StudentId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<SelectedStudentJob>()
-                .HasOne(ssj => ssj.Job).WithMany(j => j.shortListedStudentJobs).HasForeignKey(ssj => ssj.JobId).OnDelete(DeleteBehavior.Cascade);
+                .HasOne(ssj => ssj.Job).WithMany(j => j.SelectedStudentJobs).HasForeignKey(ssj => ssj.JobId).OnDelete(DeleteBehavior.Cascade);
         }
-        public DbSet<Skillora.Models.ViewModels.DeleteJobViewModel> DeleteJobViewModel { get; set; }
-        public DbSet<Skillora.Models.ViewModels.CompanyViewModel> CompanyViewModel { get; set; }
-        public DbSet<Skillora.Models.ViewModels.EditCompanyViewModel> EditCompanyViewModel { get; set; }
+        //public DbSet<Skillora.Models.ViewModels.CompanyViewModel> CompanyViewModel { get; set; }
+        //public DbSet<Skillora.Models.ViewModels.CompanyViewModel> CompanyViewModel { get; set; }
+        //public DbSet<Skillora.Models.ViewModels.DeleteJobViewModel> DeleteJobViewModel { get; set; }
+        //public DbSet<Skillora.Models.ViewModels.CompanyViewModel> CompanyViewModel { get; set; }
+        //public DbSet<Skillora.Models.ViewModels.EditCompanyViewModel> EditCompanyViewModel { get; set; }
         //public DbSet<Skillora.Models.ViewModels.DeleteStudentViewModel> DeleteStudentViewModel { get; set; }
         //public DbSet<Skillora.Models.ViewModels.EditJobViewModel> EditJobViewModel { get; set; }
         //public DbSet<Skillora.Models.ViewModels.EditStudentViewModel> EditStudentViewModel { get; set; }

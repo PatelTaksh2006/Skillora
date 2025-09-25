@@ -1,47 +1,26 @@
-﻿@model IEnumerable<Skillora.Models.ViewModels.CompanyViewModel>
+﻿
+@model Skillora.Models.Entities.Company
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Company Profile";
 }
 
-<h1>Index</h1>
+<h2>Company Profile</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Industry)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Industry)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">@Model.Name</h4>
+            <p><strong>Description:</strong> @Model.Description</p>
+            <p><strong>Industry:</strong> @Model.Industry</p>
+            <p><strong>Jobs Posted:</strong> @(Model.Job != null ? Model.Job.Count : 0)</p>
+        </div>
+    </div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary mt-3">Edit Profile</a>
+    <a asp-controller="Job" asp-action="Index" asp-route-companyId="@Model.Id" class="btn btn-secondary mt-3">View Jobs</a>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="alert alert-warning">Company profile not found.</div>
+}

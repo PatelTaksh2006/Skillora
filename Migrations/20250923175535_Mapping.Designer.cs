@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skillora.Data;
 
 namespace Skillora.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250923175535_Mapping")]
+    partial class Mapping
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -331,9 +333,6 @@ namespace Skillora.Migrations
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.HasKey("StudentId", "JobId");
 
                     b.HasIndex("JobId");
@@ -439,9 +438,6 @@ namespace Skillora.Migrations
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("applied")
-                        .HasColumnType("bit");
-
                     b.HasKey("StudentId", "JobId");
 
                     b.HasIndex("JobId");
@@ -532,13 +528,13 @@ namespace Skillora.Migrations
             modelBuilder.Entity("Skillora.Models.Entities.SelectedStudentJob", b =>
                 {
                     b.HasOne("Skillora.Models.Entities.Job", "Job")
-                        .WithMany("SelectedStudentJobs")
+                        .WithMany("shortListedStudentJobs")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Skillora.Models.Entities.Student", "Student")
-                        .WithMany("SelectedStudentJobs")
+                        .WithMany("shortListedStudentJobs")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

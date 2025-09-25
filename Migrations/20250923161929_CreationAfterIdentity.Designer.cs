@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Skillora.Data;
 
 namespace Skillora.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250923161929_CreationAfterIdentity")]
+    partial class CreationAfterIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,9 +160,6 @@ namespace Skillora.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("CompanyId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -201,9 +200,6 @@ namespace Skillora.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StudentId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -216,10 +212,6 @@ namespace Skillora.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId")
-                        .IsUnique()
-                        .HasFilter("[CompanyId] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -227,10 +219,6 @@ namespace Skillora.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("StudentId")
-                        .IsUnique()
-                        .HasFilter("[StudentId] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -330,9 +318,6 @@ namespace Skillora.Migrations
 
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.HasKey("StudentId", "JobId");
 
@@ -439,9 +424,6 @@ namespace Skillora.Migrations
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("applied")
-                        .HasColumnType("bit");
-
                     b.HasKey("StudentId", "JobId");
 
                     b.HasIndex("JobId");
@@ -500,19 +482,6 @@ namespace Skillora.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Skillora.Models.Auth.AppUser", b =>
-                {
-                    b.HasOne("Skillora.Models.Entities.Company", "Company")
-                        .WithOne("User")
-                        .HasForeignKey("Skillora.Models.Auth.AppUser", "CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Skillora.Models.Entities.Student", "Student")
-                        .WithOne("User")
-                        .HasForeignKey("Skillora.Models.Auth.AppUser", "StudentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("Skillora.Models.Entities.Job", b =>
                 {
                     b.HasOne("Skillora.Models.Entities.Company", "Company")
@@ -532,13 +501,13 @@ namespace Skillora.Migrations
             modelBuilder.Entity("Skillora.Models.Entities.SelectedStudentJob", b =>
                 {
                     b.HasOne("Skillora.Models.Entities.Job", "Job")
-                        .WithMany("SelectedStudentJobs")
+                        .WithMany("shortListedStudentJobs")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Skillora.Models.Entities.Student", "Student")
-                        .WithMany("SelectedStudentJobs")
+                        .WithMany("shortListedStudentJobs")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -1,84 +1,98 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Skillora.Models.Entities;
+using Skillora.Repositories.Interfaces;
+using Skillora.Services.Interfaces;
+using System;
+using System.Linq;
 
 namespace Skillora.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class SkillController : Controller
     {
         // GET: SkillController
+        private readonly IGenericService<Skill> _skillService;
        
-        public ActionResult Index()
+        public SkillController(IGenericService<Skill> skillService)
         {
-            return View();
+            _skillService = skillService;
+        }
+
+        public ActionResult AdminIndex()
+        {
+            return View(_skillService.GetAll().ToList());
         }
 
         // GET: SkillController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult Details(string id)
         {
-            return View();
+            return View(_skillService.Get(id));
         }
 
         // GET: SkillController/Create
         public ActionResult Create()
         {
-            return View();
+            var model = new Skill();
+            return View(model);
         }
 
         // POST: SkillController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Skill model)
         {
-            try
+            if(ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try {
+                    _skillService.Add(model);
+                    return RedirectToAction("AdminIndex");
+                }
+                catch(Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
 
         // GET: SkillController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
-            return View();
+            var model = _skillService.Get(id);
+            return View(model);
         }
 
         // POST: SkillController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(Skill model)
         {
-            try
+            if(ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                _skillService.Update(model);
+                return RedirectToAction("AdminIndex");
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
 
         // GET: SkillController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
+            var model = _skillService.Get(id);
             return View();
         }
 
         // POST: SkillController/Delete/5
         [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirmed(string id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _skillService.Delete(id);
+            return RedirectToAction("AdminIndex");
         }
     }
 }

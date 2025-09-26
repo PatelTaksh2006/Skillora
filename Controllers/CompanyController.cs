@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Skillora.Controllers
 {
+    [Authorize(Roles="Company,Admin")]
     public class CompanyController : Controller
     {
         private readonly ICompanyService _companyService;
@@ -25,12 +27,18 @@ namespace Skillora.Controllers
             _userManager = userManager;
         }
         // GET: CompanyController
-        public ActionResult Index(string id)
+        public async Task<ActionResult> Index()
         {
-            var company = _companyService.Get(id);
-            ViewData["id"] = id;
-            return View(company);
-            
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null)
+            {
+                var company = _companyService.Get(user.CompanyId);
+                ViewData["id"] = user.CompanyId;
+                return View(company);
+            }
+            return RedirectToAction("Login", "Account");
+
+
         }
 
         // GET: CompanyController/Details/5
@@ -57,7 +65,12 @@ namespace Skillora.Controllers
                 var user =await _userManager.GetUserAsync(User);
                 user.CompanyId = company.Id;
                 var result = await _userManager.UpdateAsync(user);
+                if(user.status==true)
                 return RedirectToAction("Index","Company",new {id=company.Id});
+                else
+                {
+                    return RedirectToAction("AdminApprove", "Company");
+                }
             }
             return View();
         }
@@ -116,11 +129,17 @@ namespace Skillora.Controllers
         public async Task<IActionResult> JobStatus()
         {
             var user =await _userManager.GetUserAsync(User);
-            string id = user.CompanyId;
-            var compnay=_companyService.Get(id);
-            var jobs = compnay.Job;
-            ViewData["jobs"] = jobs;
-            return View();
+            if (user != null)
+            {
+                string id = user.CompanyId;
+                var compnay = _companyService.Get(id);
+                var jobs = compnay.Job;
+                ViewData["jobs"] = jobs;
+                return View();
+            }
+
+            return RedirectToAction("Login", "Account");
+            
         }
 
 

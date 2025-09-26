@@ -77,23 +77,7 @@ namespace Skillora.Controllers
                             ModelState.AddModelError(string.Empty, item.Description);
                         }
                     }
-                    else
-                    {
-                        if (!await _roleManager.RoleExistsAsync("Admin"))
-                        {
-                            await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                        }
-                        var roleResult = await _userManager.AddToRoleAsync(user, "Admin");
-                        if (roleResult.Succeeded)
-                        {
-                            await _signInManager.SignInAsync(user, isPersistent: false);
-                            return RedirectToAction("Index", "Admin");
-                        }
-                        foreach (var item in roleResult.Errors)
-                        {
-                            ModelState.AddModelError(string.Empty, item.Description);
-                        }
-                    }
+                    
                     
                 }
                 foreach (var item in result.Errors)
@@ -141,7 +125,7 @@ namespace Skillora.Controllers
                         else
                         {
                             if (user.CompanyId != null)
-                                return RedirectToAction("Index", "Company", new { id = user.CompanyId });
+                                return RedirectToAction("Index", "Company");
                             else
                                 return RedirectToAction("Create", "Company");
 

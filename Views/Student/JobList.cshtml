@@ -11,7 +11,8 @@
         <thead>
             <tr>
                 <th>Apply</th>
-                <th>Job ID</th>
+                <th>Job</th>
+                <th>Company</th>
                 <th>Company Skills</th>
                 <th>Matched Skills</th>
                 <th>Remaining Skills</th>
@@ -41,7 +42,12 @@
                             }
                         }
                     </td>
-                    <td>@job.Id</td>
+                    <td>
+                        <span>@job.Job</span>
+                    </td>
+                    <td>
+                        <span>@job.CompanyName</span>
+                    </td>
                     <td>
                         @foreach (var skill in job.CompanySkills)
                         {
@@ -63,7 +69,9 @@
                     <td>
                         @(job.eligible ? "Eligible" : "Not Eligible")
                     </td>
-                    
+                    <td>
+                        <a asp-controller="Job" asp-action="JobDetails" asp-route-id="@job.Id" asp-route-returnUrl="@Context.Request.Path" class="btn btn-info btn-sm">View Details</a>
+                    </td>
                 </tr>
             }
         </tbody>

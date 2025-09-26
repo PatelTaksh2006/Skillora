@@ -19,6 +19,8 @@ namespace Skillora.Mappings
             CreateMap<Student,DeleteStudentViewModel>().ReverseMap();
             CreateMap<Job, DeleteJobViewModel>();
             CreateMap<EditCompanyViewModel, Company>().ReverseMap();
+            CreateMap<Job, JobViewModel>();
+            CreateMap<JobConstraint,JobViewModel>();
         }
     }
 }

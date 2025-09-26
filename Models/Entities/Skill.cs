@@ -11,7 +11,7 @@ namespace Skillora.Models.Entities
         public string Id { get; set; }
 
         [Required(ErrorMessage = "Skill name is required.")]
-        [MaxLength(15, ErrorMessage = "Skill name cannot exceed 15 characters.")]
+        [MaxLength(25, ErrorMessage = "Skill name cannot exceed 25 characters.")]
         
         public string Name { get; set; }
 

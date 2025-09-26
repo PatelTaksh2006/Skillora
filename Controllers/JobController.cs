@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Skillora.Models.Auth;
 using Skillora.Models.Entities;
 using Skillora.Models.ViewModels;
 using Skillora.Services.Implementations;
@@ -11,40 +14,47 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Skillora.Controllers
 {
+
     public class JobController : Controller
     {
         // GET: JobController
         private readonly IJobService _jobService;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
 
-        public JobController(IJobService jobService, IMapper mapper)
+        public JobController(IJobService jobService, IMapper mapper,UserManager<AppUser> userManager)
         {
             _jobService = jobService;
             _mapper = mapper;
+            _userManager = userManager;
         }
-
-        [HttpGet("Job/DisplayByCompany/{companyId}")]
-        public ActionResult DisplayByCompany(string companyId)
+        [Authorize]
+        [HttpGet("Job/DisplayByCompany")]
+        public async Task<ActionResult> DisplayByCompany()
         {
+            var user = await _userManager.GetUserAsync(User);
+            string companyId = user.CompanyId;
             var models = _jobService.GetAll()
                 .Where(j => j.CompanyId == companyId)
                 .Select(j => (j))
                 .ToList();
             ViewData["id"] = companyId;
+            
             return View(models);
         }
 
         // GET: JobController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+
+       
 
         // GET: JobController/Create
+        [Authorize]
         [HttpGet("Job/Create/{companyId}")]
+
         public ActionResult Create(string companyId)
         {
             var job = new Job();
@@ -66,24 +76,25 @@ namespace Skillora.Controllers
         }
 
         // POST: JobController/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(CreateJobViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    var job=_mapper.Map<Job>(model);
+                    var job = _mapper.Map<Job>(model);
                     var jobCon = _mapper.Map<JobConstraint>(model);
-                    _jobService.Add(job,jobCon,model.selectedSkills);
-                    return RedirectToAction("DisplayByCompany", "Job", new {companyId= model.CompanyId});
+                    _jobService.Add(job, jobCon, model.selectedSkills);
+                    return RedirectToAction("DisplayByCompany", "Job", new { companyId = model.CompanyId });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
                 }
-                
+
             }
             var skills = _jobService.GetAllSkills();
             var selectList = new List<SelectListItem>();
@@ -96,9 +107,10 @@ namespace Skillora.Controllers
         }
 
         // GET: JobController/Edit/5
+        [Authorize]
         public ActionResult Edit(string id)
         {
-            var job= _jobService.Get(id);
+            var job = _jobService.Get(id);
             var skills = _jobService.GetAllSkills();
             var selectedSkills = job.SkillJobs.Select(x => new Skill()
             {
@@ -112,7 +124,7 @@ namespace Skillora.Controllers
                 selectList.Add(new SelectListItem(item.Name, item.Id, selectedSkills.Any(x => x.Id == item.Id)));
             }
             var model = _mapper.Map<EditJobViewModel>(job);
-            _mapper.Map(job.JobConstraint,model);
+            _mapper.Map(job.JobConstraint, model);
             model.skills = selectList;
             model.Id = id;
             Console.WriteLine(model.CompanyId);
@@ -120,6 +132,7 @@ namespace Skillora.Controllers
         }
 
         // POST: JobController/Edit/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(EditJobViewModel model)
@@ -129,14 +142,14 @@ namespace Skillora.Controllers
                 try
                 {
                     Job job = _jobService.Get(model.Id);
-                    var jobConId=job.JobConstraint.Id;
+                    var jobConId = job.JobConstraint.Id;
                     var existingSkills = job.SkillJobs.Select(x => x.Skill.Id).ToList();
                     _mapper.Map(model, job);
                     _mapper.Map(model, job.JobConstraint);
                     job.JobConstraint.Id = jobConId;
                     _jobService.Update(job, model.selectedSkills, existingSkills);
 
-                    return RedirectToAction("");
+                    return RedirectToAction("DisplayByCompany","Job");
                 }
                 catch (Exception ex)
                 {
@@ -155,12 +168,14 @@ namespace Skillora.Controllers
         }
 
         // GET: JobController/Delete/5
+        [Authorize]
         public ActionResult Delete(int id)
         {
             return View();
         }
 
         // POST: JobController/Delete/5
+        [Authorize]
         [HttpGet]
         public IActionResult Delete(string id)
         {
@@ -173,8 +188,8 @@ namespace Skillora.Controllers
             model.companyName = job.Company.Name;
             return View(model);
         }
-
-        [HttpPost,ActionName("Delete")]
+        [Authorize]
+        [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(string id)
         {
             var job = _jobService.Delete(id);
@@ -182,10 +197,10 @@ namespace Skillora.Controllers
             {
                 return NotFound();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("DisplayByCompany");
         }
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult GetApplyList(string id)
         {
@@ -194,7 +209,7 @@ namespace Skillora.Controllers
                 return NotFound();
 
             List<ApplyStudentViewModel> applyStudentViewModels = new List<ApplyStudentViewModel>();
-            if (job.StudentJobs!=null && job.StudentJobs.Any(sj=>sj.applied==false))
+            if (job.StudentJobs != null && job.StudentJobs.Any(sj => sj.applied == false))
             {
                 ViewData["result"] = "applied";
                 List<StudentJob> students = job.StudentJobs;
@@ -203,7 +218,7 @@ namespace Skillora.Controllers
 
                 foreach (var item in students)
                 {
-                    
+
                     ApplyStudentViewModel apl = new ApplyStudentViewModel()
                     {
                         StudentId = item.StudentId,
@@ -244,24 +259,41 @@ namespace Skillora.Controllers
                     applyStudentViewModels.Add(apl);
                 }
             }
-                ViewData["id"] = id;
+            ViewData["id"] = id;
+            var sortedModels = applyStudentViewModels.OrderByDescending(a=>a.Skills.Count).ThenByDescending(a=>a.Cgpa).ToList();
             return View(applyStudentViewModels);
         }
 
-
+        [Authorize]
         [HttpPost]
-        public IActionResult GetApplyList(string id,List<string> selectedStudents)
+        public IActionResult GetApplyList(string id, List<string> selectedStudents)
         {
-            if(selectedStudents==null || selectedStudents.Count==0)
+            if (selectedStudents == null)
             {
                 ModelState.AddModelError(string.Empty, "Please select at least one student.");
                 ViewData["id"] = id;
-                return RedirectToAction("GetApplyList", new {id=id});
+                return RedirectToAction("GetApplyList", new { id = id });
             }
 
             Console.WriteLine(id);
             _jobService.ShortListStudents(id, selectedStudents);
-            return RedirectToAction("Index","Company");
+            return RedirectToAction("Index", "Company");
+
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult JobDetails(string id,string returnUrl)
+        {
+            var job = _jobService.Get(id);
+            if (job == null)
+                return NotFound();
+            JobViewModel model = _mapper.Map<JobViewModel>(job.JobConstraint);
+            _mapper.Map(job, model);
+            model.CompanyName = job.Company.Name;
+            model.Skills = job.SkillJobs.Select(sj => sj.Skill.Name).ToList();
+            ViewBag.ReturnUrl = returnUrl;
+            return View(model);
 
         }
     }

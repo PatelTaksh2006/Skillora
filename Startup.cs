@@ -44,6 +44,7 @@ namespace Skillora
             services.AddScoped<IStudentService, StudentService>();
             services.AddScoped<ICompanyService, CompanyService>();
             services.AddScoped<IJobService, JobService>();
+            services.AddScoped<IGenericService<Skill>, SkillService>();
             var config = new AutoMapper.MapperConfiguration(cfg => 
             {
                 cfg.AddProfile(new Helper());

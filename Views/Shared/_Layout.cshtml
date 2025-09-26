@@ -56,7 +56,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Company" asp-action="Index">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Job" asp-action="DisplayByCompany" asp-route-companyId="@ViewData["id"]">Job</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Job" asp-action="DisplayByCompany">Job</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Company" asp-action="JobStatus" >Job Status</a>
@@ -65,7 +65,9 @@
                         </ul>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                        <form asp-controller="Account" asp-action="logout" method="post">
+                            <input type="submit" value="Logout" />
+                        </form>
                     </li>
                 
             }
@@ -86,7 +88,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Company" asp-action="AdminIndex">Companies</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Skills" asp-action="AdminIndex">Skills</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Skill" asp-action="AdminIndex">Skills</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="CompanyApproval">Company Approval</a>
@@ -95,7 +97,9 @@
                         </ul>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                        <form asp-controller="Account" asp-action="logout" method="post">
+                            <input type="submit" value="Logout" />
+                        </form>
                     </li>
                 }
 </div>                

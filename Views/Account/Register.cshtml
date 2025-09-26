@@ -14,7 +14,6 @@
                 <option value="">Select Role</option>
                 <option value="Student">Student</option>
                 <option value="Company">Company</option>
-                <option value="Admin">Admin</option>
             </select>
             <span asp-validation-for="Role" class="text-danger"></span>
         </div>
@@ -35,7 +34,7 @@
 
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
-
+<a asp-controller="Account" asp-action="login">Already Have an Account</a>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

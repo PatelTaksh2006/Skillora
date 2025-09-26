@@ -77,6 +77,7 @@ namespace Skillora.Data
             modelBuilder.Entity<SelectedStudentJob>()
                 .HasOne(ssj => ssj.Job).WithMany(j => j.SelectedStudentJobs).HasForeignKey(ssj => ssj.JobId).OnDelete(DeleteBehavior.Cascade);
         }
+        //public DbSet<Skillora.Models.ViewModels.JobViewModel> JobViewModel { get; set; }
         //public DbSet<Skillora.Models.ViewModels.CompanyViewModel> CompanyViewModel { get; set; }
         //public DbSet<Skillora.Models.ViewModels.CompanyViewModel> CompanyViewModel { get; set; }
         //public DbSet<Skillora.Models.ViewModels.DeleteJobViewModel> DeleteJobViewModel { get; set; }

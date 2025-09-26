@@ -1,5 +1,6 @@
 ﻿
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Skillora.Controllers
 {
+    [Authorize(Roles ="Student,Admin")]
     public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
@@ -185,7 +187,8 @@ namespace Skillora.Controllers
                     student.Percentage12 >= item.JobConstraint.MinPercentage12 &&
                     student.Cgpa >= item.JobConstraint.MinCGPA &&
                     age >= item.JobConstraint.MinAge &&
-                    age <= item.JobConstraint.MaxAge
+                    age <= item.JobConstraint.MaxAge &&
+                    student.SkillStudents.Any(s=>jobSkills.Select(j=>j.Id).Contains(s.SkillId))
                 )
                 {
                     eligible = true;
@@ -204,6 +207,8 @@ namespace Skillora.Controllers
                 var jobListViewModel = new JobListViewModel()
                     {
                         Id = item.Id,
+                        Job=item.Title,
+                        CompanyName=item.Company.Name,
                         CompanySkills = item.SkillJobs.Select(sj => sj.Skill.Name).ToList(),
                         MatchedSkills = jobSkills.Where(js => studentSkills.Any(ss => ss.Id == js.Id)).Select(js => js.Name).ToList(),
                         RemainingSkills = jobSkills.Where(js => !studentSkills.Any(ss => ss.Id == js.Id)).Select(js => js.Name).ToList(),
@@ -214,7 +219,8 @@ namespace Skillora.Controllers
                 jobListViewModels.Add(jobListViewModel);
             }
             ViewBag.studentId = student.Id;
-            return View(jobListViewModels);
+            var sortedJobs=jobListViewModels.OrderByDescending(j => j.eligible).ThenByDescending(j => j.MatchedSkills.Count).ToList();
+            return View(sortedJobs);
 
         }
 
@@ -229,7 +235,7 @@ namespace Skillora.Controllers
             }
 
             _studentService.applyJob(id, selectedJobIds);
-            return RedirectToAction("Index");
+            return RedirectToAction("JobList");
 
         }
 

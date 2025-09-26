@@ -12,6 +12,9 @@ namespace Skillora.Models.ViewModels
         // Skills matched between student and company
         public List<string> MatchedSkills { get; set; }
 
+        public string Job {  get; set; }
+        public string CompanyName { get; set; }
+
         // Skills company requires but student doesn't have
         public List<string> RemainingSkills { get; set; }
 

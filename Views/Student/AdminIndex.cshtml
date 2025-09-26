@@ -14,7 +14,7 @@
             <th>10th %</th>
             <th>12th %</th>
             <th>Skills</th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +36,9 @@
                     {
                         <span class="badge bg-info text-dark">@skill</span>
                     }
+                </td>
+                <td>
+                    <a asp-controller="Student" asp-action="Delete" asp-route-id="@student.Id" >Delete</a>
                 </td>
             </tr>
         }

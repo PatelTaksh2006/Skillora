@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Skillora.Controllers
 {
-    [Authorize(Roles="Company,Admin")]
+
     public class CompanyController : Controller
     {
         private readonly ICompanyService _companyService;
@@ -27,12 +27,18 @@ namespace Skillora.Controllers
             _userManager = userManager;
         }
         // GET: CompanyController
+        [Authorize(Roles = "Company")]
         public async Task<ActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user != null)
             {
+                if(user.status==false)
+                {
+                    return RedirectToAction("AdminApprove","Company");
+                }
                 var company = _companyService.Get(user.CompanyId);
+       
                 ViewData["id"] = user.CompanyId;
                 return View(company);
             }
@@ -42,18 +48,17 @@ namespace Skillora.Controllers
         }
 
         // GET: CompanyController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+
 
         // GET: CompanyController/Create
+        [Authorize(Roles = "Company")]
         public ActionResult Create()
         {
             return View();
         }
 
         // POST: CompanyController/Create
+        [Authorize(Roles = "Company")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateCompanyViewModel model)
@@ -76,6 +81,7 @@ namespace Skillora.Controllers
         }
 
         // GET: CompanyController/Edit/5
+        [Authorize(Roles = "Company")]
         public ActionResult Edit(string id)
         {
             var company=_companyService.Get(id);
@@ -84,6 +90,7 @@ namespace Skillora.Controllers
         }
 
         // POST: CompanyController/Edit/5
+        [Authorize(Roles = "Company")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(EditCompanyViewModel model)
@@ -101,6 +108,7 @@ namespace Skillora.Controllers
         }
 
         // GET: CompanyController/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(string id)
         {
             var company = _companyService.Get(id);
@@ -111,7 +119,7 @@ namespace Skillora.Controllers
             var model = _mapper.Map<CompanyViewModel>(company);
             return View(model);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: CompanyController/Delete/5
         [HttpPost,ActionName("Delete")]
         public ActionResult DeleteConfirmed(string id)
@@ -124,7 +132,7 @@ namespace Skillora.Controllers
             return RedirectToAction("Index");
         }
 
-
+        [Authorize(Roles = "Company")]
         [HttpGet]
         public async Task<IActionResult> JobStatus()
         {
@@ -153,7 +161,7 @@ namespace Skillora.Controllers
         //    var job= company.Job.Select(job=>job.CompanyId==selectedJobId);
         //    return Redirect
         //}
-
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public IActionResult AdminIndex()

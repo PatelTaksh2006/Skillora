@@ -15,5 +15,6 @@ namespace Skillora.Models.ViewModels
         public decimal Percentage12 { get; set; }
 
         public List<string> Skills { get; set; }
+        public List<string> matched { get; set; }
     }
 }

@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace Skillora.Controllers
 {
-    [Authorize(Roles ="Student,Admin")]
+    
     public class StudentController : Controller
     {
         private readonly IStudentService _studentService;
@@ -30,6 +30,7 @@ namespace Skillora.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> Index()
         {
             //var listOfStudent = _studentService.GetAll();
@@ -41,6 +42,8 @@ namespace Skillora.Controllers
             return View(_studentService.Get(studentId));
 
         }
+
+        [Authorize(Roles = "Student")]
 
         [HttpGet]
         public IActionResult Create()
@@ -55,6 +58,7 @@ namespace Skillora.Controllers
             model.skills = selectList;
             return View(model);
         }
+        [Authorize(Roles = "Student")]
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateStudentViewModel model)
@@ -89,6 +93,7 @@ namespace Skillora.Controllers
             model.skills = selectList;
             return View(model);
         }
+        [Authorize(Roles = "Student")]
 
         [HttpGet]
         public IActionResult Edit(string id)
@@ -113,18 +118,26 @@ namespace Skillora.Controllers
             return View(model);
 
         }
+        [Authorize(Roles = "Student")]
 
         [HttpPost]
         public IActionResult Edit(EditStudentViewModel model)
         {
             if (ModelState.IsValid)
             {
-                Student s = _studentService.Get(model.Id);
+                try
+                {
+                    Student s = _studentService.Get(model.Id);
 
-                var existingSkills = s.SkillStudents.Select(x => x.SkillId).ToList();
-                _mapper.Map(model, s);
-                _studentService.Update(s, model.selectedSKills, existingSkills);
-                return RedirectToAction("Index");
+                    var existingSkills = s.SkillStudents.Select(x => x.SkillId).ToList();
+                    _mapper.Map(model, s);
+                    _studentService.Update(s, model.selectedSKills, existingSkills);
+                    return RedirectToAction("Index");
+                }
+                catch(Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
             }
             var allSkills = _studentService.GetAllSkills();
             var selectedSkillIds = model.selectedSKills ?? new string[0];
@@ -134,7 +147,7 @@ namespace Skillora.Controllers
             ).ToList();
             return View(model);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Delete(string id)
         {
@@ -146,6 +159,8 @@ namespace Skillora.Controllers
             var model = _mapper.Map<DeleteStudentViewModel>(student);
             return View(model);
         }
+
+        [Authorize(Roles = "Admin")]
 
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(string id)
@@ -159,6 +174,7 @@ namespace Skillora.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Student")]
 
         [HttpGet]
         public async Task<IActionResult> JobList()
@@ -223,6 +239,7 @@ namespace Skillora.Controllers
             return View(sortedJobs);
 
         }
+        [Authorize(Roles = "Student")]
 
         [HttpPost]
         public async Task<IActionResult> JobList(List<string> selectedJobIds)
@@ -238,6 +255,7 @@ namespace Skillora.Controllers
             return RedirectToAction("JobList");
 
         }
+        [Authorize(Roles = "Student")]
 
         [HttpGet]
         public async Task<IActionResult> offeredJob()
@@ -259,6 +277,7 @@ namespace Skillora.Controllers
             }
             return View(jobs);
         }
+        [Authorize(Roles = "Admin")]
 
         [HttpGet]
         public IActionResult AdminIndex()

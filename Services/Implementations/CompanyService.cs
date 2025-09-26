@@ -58,12 +58,11 @@ namespace Skillora.Services.Implementations
         // Update a company
         public Company Update(Company company)
         {
-            var existing = _unitOfWork.Company.GetById(company.Id);
-            if (existing != null)
+            
                 _unitOfWork.Company.update(company);
 
             _unitOfWork.Save();
-            return existing;
+            return company;
         }
     }
 }

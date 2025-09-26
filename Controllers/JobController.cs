@@ -32,7 +32,8 @@ namespace Skillora.Controllers
             _mapper = mapper;
             _userManager = userManager;
         }
-        [Authorize]
+        [Authorize(Roles = "Company")]
+       
         [HttpGet("Job/DisplayByCompany")]
         public async Task<ActionResult> DisplayByCompany()
         {
@@ -49,10 +50,11 @@ namespace Skillora.Controllers
 
         // GET: JobController/Details/5
 
-       
+
 
         // GET: JobController/Create
-        [Authorize]
+
+        [Authorize(Roles = "Company")]
         [HttpGet("Job/Create/{companyId}")]
 
         public ActionResult Create(string companyId)
@@ -76,7 +78,7 @@ namespace Skillora.Controllers
         }
 
         // POST: JobController/Create
-        [Authorize]
+        [Authorize(Roles = "Company")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(CreateJobViewModel model)
@@ -107,7 +109,7 @@ namespace Skillora.Controllers
         }
 
         // GET: JobController/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Company")]
         public ActionResult Edit(string id)
         {
             var job = _jobService.Get(id);
@@ -132,7 +134,7 @@ namespace Skillora.Controllers
         }
 
         // POST: JobController/Edit/5
-        [Authorize]
+        [Authorize(Roles = "Company")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(EditJobViewModel model)
@@ -168,7 +170,7 @@ namespace Skillora.Controllers
         }
 
         // GET: JobController/Delete/5
-        [Authorize]
+        [Authorize(Roles = "Company")]
         public ActionResult Delete(int id)
         {
             return View();
@@ -188,7 +190,9 @@ namespace Skillora.Controllers
             model.companyName = job.Company.Name;
             return View(model);
         }
-        [Authorize]
+
+
+        [Authorize(Roles = "Company")]
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(string id)
         {
@@ -200,11 +204,16 @@ namespace Skillora.Controllers
             return RedirectToAction("DisplayByCompany");
         }
 
-        [Authorize]
+        [Authorize(Roles = "Company")]
         [HttpGet]
         public IActionResult GetApplyList(string id)
         {
+            if(id==null)
+            {
+                return RedirectToAction("JobStatus", "Company");
+            }
             var job = _jobService.Get(id);
+            var jobSkills = job.SkillJobs.Select(sj=>sj.Skill);
             if (job == null)
                 return NotFound();
 
@@ -229,7 +238,8 @@ namespace Skillora.Controllers
                         Cgpa = item.Student.Cgpa,
                         Percentage10 = item.Student.Percentage10,
                         Percentage12 = item.Student.Percentage12,
-                        Skills = item.Student.SkillStudents.Select(s => s.Skill.Name).ToList()
+                        Skills = item.Student.SkillStudents.Select(s => s.Skill.Name).ToList(),
+                        matched= item.Student.SkillStudents.Where(s => jobSkills.Any(js=>js.Id==s.Skill.Id)).Select(s=>s.Skill.Name).ToList()
                     };
                     applyStudentViewModels.Add(apl);
                 }
@@ -244,6 +254,7 @@ namespace Skillora.Controllers
 
                 foreach (var item in students)
                 {
+                    if (item.Status == false) continue;
                     ApplyStudentViewModel apl = new ApplyStudentViewModel()
                     {
                         StudentId = item.StudentId,
@@ -254,17 +265,20 @@ namespace Skillora.Controllers
                         Cgpa = item.Student.Cgpa,
                         Percentage10 = item.Student.Percentage10,
                         Percentage12 = item.Student.Percentage12,
-                        Skills = item.Student.SkillStudents.Select(s => s.Skill.Name).ToList()
+                        Skills = item.Student.SkillStudents.Select(s => s.Skill.Name).ToList(),
+                        matched = item.Student.SkillStudents.Where(s => jobSkills.Any(js => js.Id == s.Skill.Id)).Select(s => s.Skill.Name).ToList()
+
                     };
                     applyStudentViewModels.Add(apl);
                 }
             }
+            //needed
             ViewData["id"] = id;
-            var sortedModels = applyStudentViewModels.OrderByDescending(a=>a.Skills.Count).ThenByDescending(a=>a.Cgpa).ToList();
-            return View(applyStudentViewModels);
+            var sortedModels = applyStudentViewModels.OrderByDescending(a=>a.matched.Count).ThenByDescending(a=>a.Cgpa).ToList();
+            return View(sortedModels);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Company")]
         [HttpPost]
         public IActionResult GetApplyList(string id, List<string> selectedStudents)
         {
@@ -277,11 +291,11 @@ namespace Skillora.Controllers
 
             Console.WriteLine(id);
             _jobService.ShortListStudents(id, selectedStudents);
-            return RedirectToAction("Index", "Company");
+            return RedirectToAction("JobStatus", "Company");
 
         }
 
-        [Authorize]
+        [Authorize(Roles = "Company,Student")]
         [HttpGet]
         public IActionResult JobDetails(string id,string returnUrl)
         {

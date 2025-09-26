@@ -82,6 +82,26 @@ namespace Skillora.Services.Implementations
         {
 
             //var existingSkills = s.SkillStudents.Select(x => x.SkillId).ToList();
+            DateTime dob = s.DOB;
+            DateTime dateTime = DateTime.Now;
+            int age = dateTime.Year - dob.Year;
+            if (dob.Date > dateTime.AddYears(-age))
+            {
+                age--;
+            }
+
+            if (age < 20 || age > 24)
+            {
+                throw new Exception("Age must be in between 20-24");
+
+            }
+
+            List<Student> students = GetAll();
+
+            if (students.Any(stu => stu!=s && stu.Email == s.Email))
+            {
+                throw new Exception("Email must be unique");
+            }
             var toAdd = selectedSkills.Except(existingSkills).ToList();
             var toRemove = existingSkills.Except(selectedSkills).ToList();
             s.SkillStudents = s.SkillStudents.Where(x => !toRemove.Contains(x.SkillId)).ToList();

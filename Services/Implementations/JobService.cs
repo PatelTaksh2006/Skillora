@@ -79,7 +79,7 @@ namespace Skillora.Services.Implementations
 
         public void ShortListStudents(string jobId, List<string> studentIds)
         {
-            var job= _unitOfWork.Job.GetById(jobId);
+            var job = _unitOfWork.Job.GetById(jobId);
 
             var total = job.StudentJobs.Select(sj=>sj.StudentId);
             var except = total.Except(studentIds);

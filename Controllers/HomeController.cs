@@ -12,6 +12,7 @@ using Skillora.Models.ViewModels;
 
 namespace Skillora.Controllers
 {
+    
     public class HomeController : Controller
     {
         private readonly UserManager<AppUser> _userManager;

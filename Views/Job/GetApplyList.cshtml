@@ -4,16 +4,31 @@
 }
 
 <h1>Students</h1>
+@if (ViewData["result"] == "applied")
+{
+    <span>Applied</span> 
 
+}
+else if(ViewData["result"] == "offered")
+{
+    <span>Selected</span>
+}
 
 <form asp-controller="Job" asp-action="GetApplyList" method="post">
+@if (ViewData["result"]=="applied")
+{
+    
     @* Hidden field for Job ID *@
     <input type="hidden" name="id" value="@ViewData["id"]" />
-
+}
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Select</th>
+                @if (ViewData["result"] == "applied")
+                {
+                    <th>Select</th>
+
+                }
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
@@ -21,19 +36,20 @@
                 <th>10th %</th>
                 <th>12th %</th>
                 <th>Skills</th>
+                <th>Matched Skills</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var student in Model)
             {
                 <tr>
-                    <td>
+                    
                         @* Only allow selection if student is "Applied" *@
                         @if (ViewData["result"] == "applied")
                         {
-                            <input type="checkbox" name="selectedStudents" value="@student.StudentId" />
+                        <td><input type="checkbox" name="selectedStudents" value="@student.StudentId" /></td>
                         }
-                    </td>
+                    
                     <td>@student.Name</td>
                     <td>@student.Email</td>
                     <td>@student.Phone</td>
@@ -46,13 +62,24 @@
                             <span class="badge badge-info">@skill</span>
                         }
                     </td>
+                    <td>
+                        @foreach (var skill in student.matched)
+                        {
+                            <span class="badge badge-info">@skill</span>
+                        }
+                    </td>
                     
                 </tr>
             }
         </tbody>
     </table>
+        @if (ViewData["result"] == "applied")
+        {
+            <div class="form-group">
+                <input type="submit" value="Shortlist Selected Students" class="btn btn-primary" />
+            </div>
+            
+        }
+    </form>
 
-    <div class="form-group">
-        <input type="submit" value="Shortlist Selected Students" class="btn btn-primary" />
-    </div>
-</form>
+<a asp-controller="Company" asp-action="JobStatus">Back</a>

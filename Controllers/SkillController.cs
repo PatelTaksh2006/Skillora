@@ -30,7 +30,7 @@ namespace Skillora.Controllers
         {
             return View(_skillService.Get(id));
         }
-
+             
         // GET: SkillController/Create
         public ActionResult Create()
         {
@@ -81,7 +81,7 @@ namespace Skillora.Controllers
         // GET: SkillController/Delete/5
         public ActionResult Delete(string id)
         {
-            var model = _skillService.Get(id);
+            var model = _skillService.Get(id); 
             return View();
         }
 
@@ -96,3 +96,4 @@ namespace Skillora.Controllers
         }
     }
 }
+  

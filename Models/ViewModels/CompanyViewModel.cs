@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Skillora.Models.ViewModels
 {
-    public class CompanyViewModel
+    public class CompanyViewModel 
     {
         public string? userId { get; set; }
         public string Id { get; set; }

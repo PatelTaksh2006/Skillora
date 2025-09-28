@@ -171,7 +171,7 @@ namespace Skillora.Controllers
                 return NotFound();
             }
             _studentService.Delete(id);
-            return RedirectToAction("Index");
+            return RedirectToAction("AdminIndex");
         }
 
         [Authorize(Roles = "Student")]

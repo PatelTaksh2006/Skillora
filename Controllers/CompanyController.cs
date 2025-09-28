@@ -39,7 +39,7 @@ namespace Skillora.Controllers
                 }
                 var company = _companyService.Get(user.CompanyId);
        
-                ViewData["id"] = user.CompanyId;
+                //ViewData["id"] = user.CompanyId;
                 return View(company);
             }
             return RedirectToAction("Login", "Account");
@@ -71,7 +71,7 @@ namespace Skillora.Controllers
                 user.CompanyId = company.Id;
                 var result = await _userManager.UpdateAsync(user);
                 if(user.status==true)
-                return RedirectToAction("Index","Company",new {id=company.Id});
+                return RedirectToAction("Index","Company"/*,new {id=company.Id}*/);
                 else
                 {
                     return RedirectToAction("AdminApprove", "Company");
@@ -129,7 +129,7 @@ namespace Skillora.Controllers
             {
                 return NotFound();
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("AdminIndex");
         }
 
         [Authorize(Roles = "Company")]

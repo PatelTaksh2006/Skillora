@@ -182,6 +182,8 @@ namespace Skillora.Controllers
             var user=await _userManager.GetUserAsync(User);
             string id = user.StudentId;
             var jobs = _studentService.GetAllJobs();
+            //jobs = jobs.Where(j => !j.SelectedStudentJobs.Any(sj=>sj.StudentId==id)).ToList();
+            jobs = jobs.Where(j => !j.SelectedStudentJobs.Any()).ToList();
             var student = _studentService.Get(id);
             var studentSkills = student.SkillStudents.Select(ss => ss.Skill).ToList();
             List<JobListViewModel> jobListViewModels = new List<JobListViewModel>();

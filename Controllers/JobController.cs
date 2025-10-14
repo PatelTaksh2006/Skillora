@@ -282,7 +282,7 @@ namespace Skillora.Controllers
         [HttpPost]
         public IActionResult GetApplyList(string id, List<string> selectedStudents)
         {
-            if (selectedStudents == null)
+            if (selectedStudents == null || selectedStudents.Count==0)
             {
                 ModelState.AddModelError(string.Empty, "Please select at least one student.");
                 ViewData["id"] = id;

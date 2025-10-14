@@ -15,6 +15,7 @@ else if(ViewData["result"] == "offered")
 }
 
 <form asp-controller="Job" asp-action="GetApplyList" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
 @if (ViewData["result"]=="applied")
 {
     

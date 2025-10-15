@@ -131,10 +131,11 @@ namespace Skillora.Controllers
 
                         }
                     }
-                    else
+                    else if(user.Role=="Admin")
                     {
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Admin");
                     }
+                    
                 }
                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }

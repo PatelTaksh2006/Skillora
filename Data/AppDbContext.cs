@@ -4,6 +4,8 @@ using Skillora.Models.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Skillora.Models.Auth;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using System;
 
 namespace Skillora.Data
 {
@@ -31,6 +33,39 @@ namespace Skillora.Data
                 .WithOne(c => c.User)
                 .HasForeignKey<AppUser>(u => u.CompanyId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            
+            modelBuilder.Entity<AppUser>().HasData(
+                new AppUser
+                {
+                    Id = "1",
+                    UserName = "Admin",
+                    PasswordHash = new PasswordHasher<AppUser>().HashPassword(null, "Admin@123"),
+                    Role = "Admin",
+                    status = true,
+                    NormalizedUserName = "ADMIN",
+                    LockoutEnabled = true
+                }
+            );
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = "ac8c-824df663fcac",
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                }
+                );
+
+
+modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+    new IdentityUserRole<string>
+    {
+        RoleId = "ac8c-824df663fcac",
+        UserId = "1"
+    }
+);
+                
 
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.Job)

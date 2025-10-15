@@ -44,6 +44,15 @@ namespace Skillora.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ac8c-824df663fcac",
+                            ConcurrencyStamp = "c2737703-6735-485f-aed4-0c095e5f5ada",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -129,6 +138,13 @@ namespace Skillora.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "ac8c-824df663fcac"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -233,6 +249,24 @@ namespace Skillora.Migrations
                         .HasFilter("[StudentId] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "35deb26a-a725-48bd-8849-147b470af4c1",
+                            EmailConfirmed = false,
+                            LockoutEnabled = true,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM953GJnfADvxfqimtUXuGiq3oG8ZQxuTimxDQz6f95E9Cv4tRkn3cld3SRWI51PFw==",
+                            PhoneNumberConfirmed = false,
+                            Role = "Admin",
+                            SecurityStamp = "651a880d-f4dd-4e9e-a6d7-f03091ba67ce",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin",
+                            status = true
+                        });
                 });
 
             modelBuilder.Entity("Skillora.Models.Entities.Company", b =>

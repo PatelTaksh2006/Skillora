@@ -10,8 +10,8 @@ using Skillora.Data;
 namespace Skillora.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250923161929_CreationAfterIdentity")]
-    partial class CreationAfterIdentity
+    [Migration("20251015072244_AddAdminWithDefaultFieldsAndRoles")]
+    partial class AddAdminWithDefaultFieldsAndRoles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +46,15 @@ namespace Skillora.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ac8c-824df663fcac",
+                            ConcurrencyStamp = "c2737703-6735-485f-aed4-0c095e5f5ada",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -131,6 +140,13 @@ namespace Skillora.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "ac8c-824df663fcac"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -159,6 +175,9 @@ namespace Skillora.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("CompanyId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -200,6 +219,9 @@ namespace Skillora.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -212,6 +234,10 @@ namespace Skillora.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyId")
+                        .IsUnique()
+                        .HasFilter("[CompanyId] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -220,7 +246,29 @@ namespace Skillora.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("StudentId")
+                        .IsUnique()
+                        .HasFilter("[StudentId] IS NOT NULL");
+
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "35deb26a-a725-48bd-8849-147b470af4c1",
+                            EmailConfirmed = false,
+                            LockoutEnabled = true,
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEM953GJnfADvxfqimtUXuGiq3oG8ZQxuTimxDQz6f95E9Cv4tRkn3cld3SRWI51PFw==",
+                            PhoneNumberConfirmed = false,
+                            Role = "Admin",
+                            SecurityStamp = "651a880d-f4dd-4e9e-a6d7-f03091ba67ce",
+                            TwoFactorEnabled = false,
+                            UserName = "Admin",
+                            status = true
+                        });
                 });
 
             modelBuilder.Entity("Skillora.Models.Entities.Company", b =>
@@ -319,6 +367,9 @@ namespace Skillora.Migrations
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
                     b.HasKey("StudentId", "JobId");
 
                     b.HasIndex("JobId");
@@ -333,8 +384,8 @@ namespace Skillora.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(15)")
-                        .HasMaxLength(15);
+                        .HasColumnType("nvarchar(25)")
+                        .HasMaxLength(25);
 
                     b.HasKey("Id");
 
@@ -424,6 +475,9 @@ namespace Skillora.Migrations
                     b.Property<string>("JobId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("applied")
+                        .HasColumnType("bit");
+
                     b.HasKey("StudentId", "JobId");
 
                     b.HasIndex("JobId");
@@ -482,6 +536,19 @@ namespace Skillora.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Skillora.Models.Auth.AppUser", b =>
+                {
+                    b.HasOne("Skillora.Models.Entities.Company", "Company")
+                        .WithOne("User")
+                        .HasForeignKey("Skillora.Models.Auth.AppUser", "CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Skillora.Models.Entities.Student", "Student")
+                        .WithOne("User")
+                        .HasForeignKey("Skillora.Models.Auth.AppUser", "StudentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Skillora.Models.Entities.Job", b =>
                 {
                     b.HasOne("Skillora.Models.Entities.Company", "Company")
@@ -501,13 +568,13 @@ namespace Skillora.Migrations
             modelBuilder.Entity("Skillora.Models.Entities.SelectedStudentJob", b =>
                 {
                     b.HasOne("Skillora.Models.Entities.Job", "Job")
-                        .WithMany("shortListedStudentJobs")
+                        .WithMany("SelectedStudentJobs")
                         .HasForeignKey("JobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Skillora.Models.Entities.Student", "Student")
-                        .WithMany("shortListedStudentJobs")
+                        .WithMany("SelectedStudentJobs")
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

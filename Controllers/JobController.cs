@@ -245,7 +245,7 @@ namespace Skillora.Controllers
                 }
 
             }
-            else
+            else if(job.SelectedStudentJobs !=null && job.SelectedStudentJobs.Any())
             {
                 ViewData["result"] = "offered";
                 List<SelectedStudentJob> students = job.SelectedStudentJobs;

@@ -83,6 +83,9 @@ Ensure the following are installed:
     <b><u>By pressing crtl + F5 in visual studio or manually press that run button.</u></b>
     </li>
 </ol>
+For check admin functionality these are the admin username and password:<br>
+Username : Admin<br>
+Password : Admin@123
 <br><br>
 
 <h2>👥 Team Members & Contributions</h2>

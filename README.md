@@ -67,12 +67,12 @@ Ensure the following are installed:
   <li><h4>Clone the repository:</h4>
     <b><u>By run following command on terminal:</u></b><br>
   git clone https://github.com/PatelTaksh2006/Skillora.git<br>
-  cd Skillora<br>
+  open this project in visual studio<br>
   </li>
   <li><h4>Configure Database Connection</h4>
   <b><u>Open appsettings.json and modify your SQL Server connection string:</u></b><br>
     "ConnectionStrings": {<br>
-  "DbCon": "server=(localdb)\\MSSQLLocalDB;database=<your_database_name>;Trusted_Connection=true"<br>
+  "DbCon": "server=(localdb)\\MSSQLLocalDB;database=your_database_name;Trusted_Connection=true"<br>
 }
   </li>
     <li><h4>run the migrations:</h4>
